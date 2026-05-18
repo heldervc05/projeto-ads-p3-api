@@ -36,4 +36,9 @@ public class Agendamento {
 
     @Column(nullable = false)
     private String status;
+
+    // Novo campo para armazenar o motivo do cancelamento
+    // Adicionei um tamanho de 500 caracteres para garantir que caibam textos maiores
+    @Column(length = 500)
+    private String justificativaCancelamento;
 }
