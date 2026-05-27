@@ -9,7 +9,7 @@ import java.time.LocalDate;
 import java.time.LocalTime;
 
 @Entity
-@Table(name = "AGENDAMENTOS")
+@Table(name = "tb_agendamento")
 @Getter
 @Setter
 @NoArgsConstructor
