@@ -159,7 +159,9 @@ public class UsuarioController {
         try {
             java.util.List<Usuario> professores = service.buscarProfessoresDestaquePorAluno(alunoId);
             return ResponseEntity.ok(professores);
-        } catch (RuntimeException e) {
+        } catch (Exception e) {
+            System.err.println("[ERRO] /professores/destaque/" + alunoId + " -> " + e.getClass().getSimpleName() + ": " + e.getMessage());
+            e.printStackTrace();
             return ResponseEntity.badRequest().body(null);
         }
     }
