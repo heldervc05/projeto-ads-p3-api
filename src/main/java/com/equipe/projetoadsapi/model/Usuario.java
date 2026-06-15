@@ -48,6 +48,15 @@ public class Usuario {
     @Column(name = "bio_professor", columnDefinition = "TEXT")
     private String bioProfessor;
 
+    @Column(name = "foto_url", length = 1000)
+    private String fotoUrl;
+
+    @Column(name = "nota_media")
+    private Double notaMedia = 5.0; // Professor recém-cadastrado começa com 5 estrelas
+
+    @Column(name = "total_avaliacoes")
+    private Integer totalAvaliacoes = 0; // Começa com 0 avaliações
+
     // 🟢 CORREÇÃO: Envia a lista para o Front-end, mas quebra o loop infinito ignorando apenas o 'usuario' do outro lado
     @com.fasterxml.jackson.annotation.JsonIgnoreProperties("usuario")
     @OneToMany(mappedBy = "usuario", cascade = CascadeType.ALL, orphanRemoval = true)

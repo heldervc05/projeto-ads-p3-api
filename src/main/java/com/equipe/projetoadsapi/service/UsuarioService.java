@@ -235,4 +235,46 @@ public class UsuarioService {
 
         return repository.save(usuarioBD);
     }
+    
+    // 🟢 REGRA DE NEGÓCIO: Buscar professores com base nos interesses
+    @Transactional(readOnly = true)
+    public java.util.List<Usuario> buscarProfessoresDestaquePorAluno(Long alunoId) {
+        Usuario aluno = repository.findById(alunoId)
+                .orElseThrow(() -> new RuntimeException("Aluno não encontrado."));
+
+        java.util.List<Long> saberIds = new java.util.ArrayList<>();
+        
+        if (aluno.getInteresses() != null) {
+            aluno.getInteresses().forEach(interesse -> {
+                saberIds.add(interesse.getSaber().getId()); 
+            });
+        }
+
+        // Se o aluno não tem interesse nenhum cadastrado
+        if (saberIds.isEmpty()) {
+            return buscarTopProfessoresGerais();
+        }
+
+        // Busca no banco os professores das matérias do aluno
+        java.util.List<Usuario> recomendados = repository.findProfessoresPorMateriasOrdenadosPorNota(saberIds);
+
+        // 🟢 O SEGREDO: Se não achar nenhum professor pra matéria exata dele, traz os melhores do app
+        if (recomendados.isEmpty()) {
+            return buscarTopProfessoresGerais();
+        }
+
+        return recomendados;
+    }
+
+    // Método auxiliar para buscar os melhores gerais do app
+    private java.util.List<Usuario> buscarTopProfessoresGerais() {
+        return repository.findAll().stream()
+                .filter(u -> u.getAptidoes() != null && !u.getAptidoes().isEmpty())
+                .sorted((p1, p2) -> {
+                    Double nota1 = p1.getNotaMedia() != null ? p1.getNotaMedia() : 0.0;
+                    Double nota2 = p2.getNotaMedia() != null ? p2.getNotaMedia() : 0.0;
+                    return nota2.compareTo(nota1);
+                })
+                .collect(java.util.stream.Collectors.toList());
+    }
 }

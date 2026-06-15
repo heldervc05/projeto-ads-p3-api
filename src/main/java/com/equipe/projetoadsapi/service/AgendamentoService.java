@@ -25,7 +25,9 @@ public class AgendamentoService {
             throw new RuntimeException("Erro: O professor já possui uma aula marcada neste horário.");
         }
 
-        agendamento.setStatus("CONFIRMADO"); 
+        // 🟢 É NESTA LINHA AQUI! Deve estar PENDENTE e não CONFIRMADO.
+        agendamento.setStatus("PENDENTE"); 
+        
         return agendamentoRepository.save(agendamento);
     }
 
@@ -67,6 +69,26 @@ public Agendamento cancelarAgendamento(Long id, String justificativa) {
         
         agendamento.setStatus("CANCELADO");
         agendamento.setJustificativaCancelamento(justificativa); // Salva o motivo
+        return agendamentoRepository.save(agendamento);
+    }
+
+    // Busca os agendamentos onde o usuário é o professor
+    public List<Agendamento> buscarPorProfessor(Long professorId) {
+        Usuario professor = new Usuario();
+        professor.setId(professorId);
+        return agendamentoRepository.findByProfessor(professor);
+    }
+
+    // Altera o status da aula de PENDENTE para CONFIRMADO
+    public Agendamento aceitarAgendamento(Long id) {
+        Agendamento agendamento = agendamentoRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Agendamento não encontrado."));
+        
+        if (!"PENDENTE".equals(agendamento.getStatus())) {
+            throw new RuntimeException("Este agendamento não está mais pendente.");
+        }
+        
+        agendamento.setStatus("CONFIRMADO");
         return agendamentoRepository.save(agendamento);
     }
 }

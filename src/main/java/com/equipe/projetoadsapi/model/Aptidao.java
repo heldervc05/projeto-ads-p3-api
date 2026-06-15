@@ -6,6 +6,8 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import java.math.BigDecimal; // Importação necessária para trabalhar com valores monetários de forma precisa
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 /**
  * ENTIDADE APTIDÃO (Relacionamento Professor -> Saber com Atributos Customizados)
  * * Roteiro de Defesa para a Banca:
@@ -32,6 +34,7 @@ public class Aptidao {
      */
     @ManyToOne
     @JoinColumn(name = "usuario_id", nullable = false)
+    @JsonIgnore
     private Usuario usuario;
 
     /**

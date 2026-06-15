@@ -58,4 +58,20 @@ public class AgendamentoController {
             return ResponseEntity.badRequest().build();
         }
     }
+
+// Rota GET chamada pela aba Agenda
+    @GetMapping("/professor/{professorId}")
+    public ResponseEntity<List<Agendamento>> listarPorProfessor(@PathVariable Long professorId) {
+        return ResponseEntity.ok(agendamentoService.buscarPorProfessor(professorId));
+    }
+
+    // Rota PUT chamada pelo botão "Aceitar"
+    @PutMapping("/{id}/aceitar")
+    public ResponseEntity<Agendamento> aceitarAgendamento(@PathVariable Long id) {
+        try {
+            return ResponseEntity.ok(agendamentoService.aceitarAgendamento(id));
+        } catch (RuntimeException e) {
+            return ResponseEntity.badRequest().build();
+        }
+    }
 }
