@@ -195,19 +195,21 @@ public class UsuarioService {
         return repository.save(usuarioBD);
     }
 
-    // =====================================================================
-    // PERFIL DO PROFESSOR (Bio + Aptidões)
+// =====================================================================
+    // PERFIL DO PROFESSOR (Bio + Aptidões + Disponibilidades)
     // =====================================================================
 
     @Transactional
     public Usuario atualizarPerfilProfessor(Long id, String bio,
-                                            java.util.List<java.util.Map<String, Object>> aptidoesPayload) {
+                                            java.util.List<java.util.Map<String, Object>> aptidoesPayload,
+                                            java.util.List<java.util.Map<String, Object>> dispPayload) { // 🟢 Adicionado dispPayload
 
         Usuario usuarioBD = repository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Usuário não encontrado."));
 
         usuarioBD.setBioProfessor(bio);
 
+        // --- 1. LÓGICA DE APTIDÕES (MANTIDA IGUAL À SUA ORIGINAL) ---
         if (usuarioBD.getAptidoes() != null) {
             usuarioBD.getAptidoes().clear();
         } else {
@@ -230,6 +232,30 @@ public class UsuarioService {
                 novaAptidao.setPrecoHora(preco);
 
                 usuarioBD.getAptidoes().add(novaAptidao);
+            }
+        }
+
+        // --- 2. 🟢 NOVA LÓGICA DE DISPONIBILIDADES ---
+        if (usuarioBD.getDisponibilidades() != null) {
+            usuarioBD.getDisponibilidades().clear();
+        } else {
+            usuarioBD.setDisponibilidades(new java.util.ArrayList<>());
+        }
+
+        if (dispPayload != null && !dispPayload.isEmpty()) {
+            for (java.util.Map<String, Object> dispMap : dispPayload) {
+                com.equipe.projetoadsapi.model.Disponibilidade novaDisp = new com.equipe.projetoadsapi.model.Disponibilidade();
+                novaDisp.setUsuario(usuarioBD);
+                novaDisp.setDiaSemana((String) dispMap.get("diaSemana"));
+                
+                String inicioStr = (String) dispMap.get("horaInicio");
+                String fimStr = (String) dispMap.get("horaFim");
+                
+                // Converte a string "08:00:00" que veio do React Native para o relógio do Java
+                if (inicioStr != null) novaDisp.setHoraInicio(java.time.LocalTime.parse(inicioStr));
+                if (fimStr != null) novaDisp.setHoraFim(java.time.LocalTime.parse(fimStr));
+                
+                usuarioBD.getDisponibilidades().add(novaDisp);
             }
         }
 

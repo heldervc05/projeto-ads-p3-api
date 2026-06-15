@@ -66,4 +66,8 @@ public class Usuario {
     @OneToMany(mappedBy = "usuario", cascade = CascadeType.ALL, orphanRemoval = true)
     private java.util.List<Aptidao> aptidoes;
 
+    @com.fasterxml.jackson.annotation.JsonIgnoreProperties("usuario")
+    @OneToMany(mappedBy = "usuario", cascade = CascadeType.ALL, orphanRemoval = true)
+    private java.util.List<Disponibilidade> disponibilidades;
+
 }

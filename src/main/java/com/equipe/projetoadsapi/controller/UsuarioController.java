@@ -137,7 +137,7 @@ public class UsuarioController {
         }
     }
 
-    // ------------------------------------------------------------------
+// ------------------------------------------------------------------
     // ROTA 8 — ATUALIZAR PERFIL DO PROFESSOR
     // ------------------------------------------------------------------
     @SuppressWarnings("unchecked")
@@ -148,7 +148,13 @@ public class UsuarioController {
             String bioExtraida = (String) payload.get("bio");
             java.util.List<java.util.Map<String, Object>> aptidoesPayload =
                     (java.util.List<java.util.Map<String, Object>>) payload.get("aptidoesNova");
-            return ResponseEntity.ok(service.atualizarPerfilProfessor(id, bioExtraida, aptidoesPayload));
+            
+            // 🟢 NOVO: Pegando a lista de horários enviada pelo App Mobile
+            java.util.List<java.util.Map<String, Object>> dispPayload =
+                    (java.util.List<java.util.Map<String, Object>>) payload.get("disponibilidadesNova");
+
+            // 🟢 ATUALIZADO: Passando o 4º parâmetro (dispPayload)
+            return ResponseEntity.ok(service.atualizarPerfilProfessor(id, bioExtraida, aptidoesPayload, dispPayload));
         } catch (RuntimeException e) {
             return ResponseEntity.badRequest().body(Map.of("message", e.getMessage()));
         }

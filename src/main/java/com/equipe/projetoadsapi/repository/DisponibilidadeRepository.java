@@ -10,5 +10,7 @@ import java.util.List;
 @Repository
 public interface DisponibilidadeRepository extends JpaRepository<Disponibilidade, Long> {
     // Buscar os dias e horários que um professor trabalha
-    List<Disponibilidade> findByProfessor(Usuario professor);
+    List<Disponibilidade> findByUsuario(Usuario usuario);
+
+    List<Disponibilidade> findByUsuarioId(Long usuarioId);
 }
